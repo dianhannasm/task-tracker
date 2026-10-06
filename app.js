@@ -23,6 +23,7 @@ function render() {
     tugas.forEach((item) => {
         const li = document.createElement("li");
         li.classList.add("task");
+        li.dataset.id = item.id;
 
         if (item.selesai) {
             li.classList.add("selesai");
@@ -91,4 +92,30 @@ form.addEventListener("submit", (e) => {
     form.reset();
 
     render();
+});
+
+const daftar = document.querySelector("#daftar");
+
+daftar.addEventListener("click", (e) => {
+    const li = e.target.closest(".task");
+
+    if (!li) {
+        return;
+    }
+
+    const index = tugas.findIndex((item) => item.id === Number(li.dataset.id));
+
+    if (index === -1) {
+        return;
+    }
+
+    if (e.target.matches('input[type="checkbox"]')) {
+        tugas[index].selesai = e.target.checked;
+        render();
+    }
+
+    if (e.target.closest(".hapus")) {
+        tugas.splice(index, 1);
+        render();
+    }
 });
