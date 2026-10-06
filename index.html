@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,14 +11,10 @@
 <body>
     <main class="container">
         <section class="app">
-            <h1>Task Tracker Kuliah</h1>
+            <h1>📋 Task Tracker Kuliah</h1>
 
             <form id="form-tugas">
-                <input
-                    type="text"
-                    id="judul"
-                    placeholder="Judul tugas (min. 3 karakter)"
-                >
+                <input type="text" id="judul" placeholder="Judul tugas (min. 3 karakter)">
 
                 <select id="matkul">
                     <option value="Pemrograman Web">Pemrograman Web</option>
@@ -36,9 +31,9 @@
             </form>
 
             <div class="filter" id="filter">
-                <button type="button" class="on" data-filter="semua">Semua</button>
-                <button type="button" data-filter="aktif">Aktif</button>
-                <button type="button" data-filter="selesai">Selesai</button>
+                <button type="button" class="on">Semua</button>
+                <button type="button">Aktif</button>
+                <button type="button">Selesai</button>
             </div>
 
             <p id="ringkasan">0 tugas aktif</p>
@@ -47,5 +42,4 @@
         </section>
     </main>
 </body>
-
 </html>
