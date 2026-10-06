@@ -15,12 +15,31 @@ const tugas = [
     }
 ];
 
+let filterAktif = "semua";
+
 function render() {
     const daftar = document.querySelector("#daftar");
 
     daftar.innerHTML = "";
 
-    tugas.forEach((item) => {
+    const ringkasan = document.querySelector("#ringkasan");
+    const jumlahAktif = tugas.filter((item) => !item.selesai).length;
+
+    ringkasan.textContent = `${jumlahAktif} tugas aktif`;
+
+    const tugasTampil = tugas.filter((item) => {
+        if (filterAktif === "aktif") {
+            return !item.selesai;
+        }
+
+        if (filterAktif === "selesai") {
+            return item.selesai;
+        }
+
+        return true;
+    })
+
+    tugasTampil.forEach((item) => {
         const li = document.createElement("li");
         li.classList.add("task");
         li.dataset.id = item.id;
@@ -118,4 +137,24 @@ daftar.addEventListener("click", (e) => {
         tugas.splice(index, 1);
         render();
     }
+});
+
+const filter = document.querySelector("#filter");
+
+filter.addEventListener("click", (e) => {
+    const tombol = e.target.closest("button");
+
+    if (!tombol) {
+        return;
+    }
+
+    filterAktif = tombol.dataset.filter;
+
+    filter.querySelectorAll("button").forEach((button) => {
+        button.classList.remove("on");
+    });
+
+    tombol.classList.add("on");
+
+    render();
 });
