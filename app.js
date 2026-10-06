@@ -8,8 +8,8 @@ const tugas = [
     },
     {
         id: 2,
-        judul: "ERD sistem perpustakaan",
-        matkul: "Basis Data",
+        judul: "Kuis",
+        matkul: "KJK",
         deadline: "2026-10-12",
         selesai: true
     }
@@ -55,3 +55,40 @@ function render() {
 }
 
 render();
+
+const form = document.querySelector("#form-tugas");
+const judulInput = document.querySelector("#judul");
+const matkulInput = document.querySelector("#matkul");
+const deadlineInput = document.querySelector("#deadline");
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const judul = judulInput.value.trim();
+    const matkul = matkulInput.value;
+    const deadline = deadlineInput.value;
+
+    if (judul.length < 3) {
+        alert("Judul tugas minimal 3 karakter.");
+        return;
+    }
+
+    if (deadline === "") {
+        alert("Deadline wajib diisi.");
+        return;
+    }
+
+    const tugasBaru = {
+        id: Date.now(),
+        judul: judul,
+        matkul: matkul,
+        deadline: deadline,
+        selesai: false
+    };
+
+    tugas.push(tugasBaru);
+
+    form.reset();
+
+    render();
+});
