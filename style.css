@@ -1,0 +1,126 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef5fa;
+    color: #102a43;
+}
+
+.container {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.app {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+input,
+select,
+button {
+    font: inherit;
+}
+
+input,
+select {
+    padding: 12px;
+    border: 1px solid #b8c9d9;
+    border-radius: 8px;
+}
+
+button {
+    border: 1px solid #b8c9d9;
+    border-radius: 8px;
+    padding: 10px 16px;
+    background: white;
+    color: #102a43;
+    cursor: pointer;
+}
+
+form button {
+    background: #102a43;
+    color: white;
+    border-color: #102a43;
+}
+
+.filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.filter .on {
+    background: #102a43;
+    color: white;
+}
+
+#ringkasan {
+    text-align: right;
+    color: #607d94;
+}
+
+#daftar {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    border: 1px solid #d4e0e8;
+    border-radius: 10px;
+}
+
+.task-info {
+    flex: 1;
+}
+
+.task-title {
+    margin: 0 0 5px;
+    font-weight: bold;
+}
+
+.task-meta {
+    margin: 0;
+    color: #607d94;
+    font-size: 14px;
+}
+
+.hapus {
+    color: #d9534f;
+    background: white;
+}
+
+.selesai .task-title {
+    text-decoration: line-through;
+    color: #8a9aaa;
+}
+
+@media (max-width: 700px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+}
