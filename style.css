@@ -5,33 +5,38 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #eef5fa;
-    color: #102a43;
+    background: #f2f2f2;
+    color: #122;
 }
 
 .container {
-    max-width: 850px;
-    margin: 40px auto;
+    width: 100%;
+    max-width: 900px;
+    margin: 50px auto;
     padding: 20px;
 }
 
 .app {
+    width: 100%;
     background: white;
-    border-radius: 12px;
-    padding: 28px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    padding: 30px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 h1 {
-    margin-top: 0;
-    margin-bottom: 24px;
+    margin: 0 0 25px;
+    font-size: 28px;
+    font-weight: 600;
 }
 
 form {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr auto;
+    grid-template-columns: minmax(0, 1.8fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
     gap: 10px;
-    margin-bottom: 24px;
+    width: 100%;
+    margin-bottom: 25px;
 }
 
 input,
@@ -42,40 +47,73 @@ button {
 
 input,
 select {
-    padding: 12px;
-    border: 1px solid #b8c9d9;
-    border-radius: 8px;
+    width: 100%;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #cfcfcf;
+    border-radius: 6px;
+    background: #fff;
+    color: #222;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #888;
 }
 
 button {
-    border: 1px solid #b8c9d9;
-    border-radius: 8px;
-    padding: 10px 16px;
+    border: 1px solid #222;
+    border-radius: 6px;
+    padding: 11px 18px;
     background: white;
-    color: #102a43;
+    color: #222;
     cursor: pointer;
 }
 
 form button {
-    background: #102a43;
+    padding: 11px 18px;
+    border: 1px solid #222;
+    border-radius: 6px;
+    background: #222;
     color: white;
-    border-color: #102a43;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+form button:hover {
+    background: #444;
 }
 
 .filter {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+}
+
+.filter button {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+}
+
+.filter button:hover {
+    background: #f0f0f0;
 }
 
 .filter .on {
-    background: #102a43;
+    background: #222;
     color: white;
+    border-color: #222;
 }
 
 #ringkasan {
-    text-align: right;
-    color: #607d94;
+    margin: 10px 0 15px;
+    color: #777;
+    font-size: 14px;
 }
 
 #daftar {
@@ -88,33 +126,91 @@ form button {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px;
+    width: 100%;
+    padding: 14px 15px;
     margin-bottom: 10px;
-    border: 1px solid #d4e0e8;
-    border-radius: 10px;
+    border: 1px solid #d8d8d8;
+    border-radius: 7px;
+    background: white;
+}
+
+.task input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
 }
 
 .task-info {
     flex: 1;
+    min-width: 0;
 }
 
 .task-title {
     margin: 0 0 5px;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .task-meta {
     margin: 0;
-    color: #607d94;
+    color: #777;
     font-size: 14px;
 }
 
 .hapus {
-    color: #d9534f;
-    background: white;
+    padding: 5px 9px;
+    border: none;
+    color: #777;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.hapus:hover {
+    color: #222;
 }
 
 .selesai .task-title {
     text-decoration: line-through;
-    color: #8a9aaa;
+    color: #999;
+}
+
+@media (max-width: 750px) {
+    form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    form input[type="text"] {
+        grid-column: 1 / -1;
+    }
+
+    form button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 500px) {
+    .container {
+        margin: 20px auto;
+        padding: 12px;
+    }
+
+    .app {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    form input[type="text"] {
+        grid-column: auto;
+    }
+
+    .filter {
+        flex-wrap: wrap;
+    }
 }
