@@ -2,6 +2,26 @@ let tugas = [];
 let filterAktif = "semua";
 let statusMuat = "loading";
 let pesanError = "";
+let matkulList = [];
+
+async function api(url, options = {}) {
+    const res = await fetch(url, options);
+
+    // Respons DELETE 204 tidak mempunyai body.
+    const data = res.status === 204
+        ? null
+        : await res.json().catch(() => null);
+
+    if (!res.ok) {
+        throw new Error(
+            data?.error ||
+            data?.message ||
+            `Permintaan gagal (${res.status}).`
+        );
+    }
+
+    return data;
+}
 
 function render() {
     const daftar = document.querySelector("#daftar");
@@ -84,23 +104,26 @@ function render() {
     });
 }
 
-async function muatTugas() {
+async function muatData() {
     statusMuat = "loading";
     pesanError = "";
     render();
 
     try {
-        const res = await fetch("/api/tugas");
+        const [dataTugas, dataMatkul] = await Promise.all([
+            api("/api/tugas"),
+            api("/api/matkul")
+        ]);
 
-        if (!res.ok) {
-            throw new Error(`Gagal memuat tugas: ${res.status}`);
-        }
+        tugas = dataTugas;
+        matkulList = dataMatkul;
 
-        tugas = await res.json();
+        renderMatkul();
+
         statusMuat = "success";
     } catch (error) {
         statusMuat = "error";
-        pesanError = error.message || "Terjadi kesalahan saat memuat tugas.";
+        pesanError = error.message || "Gagal memuat data.";
     } finally {
         render();
     }
@@ -109,10 +132,37 @@ async function muatTugas() {
 const tombolUlang = document.querySelector("#ulang");
 
 tombolUlang.addEventListener("click", () => {
-    muatTugas();
+    muatData();
 });
 
-muatTugas();
+function renderMatkul() {
+    const select = document.querySelector("#matkul");
+    const pilihanLama = select.value;
+
+    select.replaceChildren();
+
+    matkulList.forEach((item) => {
+        const nama = typeof item === "string"
+            ? item
+            : item.nama ?? item.matkul ?? item.name;
+
+        if (!nama) {
+            return;
+        }
+
+        const option = document.createElement("option");
+        option.value = nama;
+        option.textContent = nama;
+
+        select.append(option);
+    });
+
+    if ([...select.options].some(
+        (option) => option.value === pilihanLama
+    )) {
+        select.value = pilihanLama;
+    }
+}
 
 const form = document.querySelector("#form-tugas");
 const judulInput = document.querySelector("#judul");
@@ -143,7 +193,7 @@ form.addEventListener("submit", async (e) => {
     tombolTambah.disabled = true;
 
     try {
-        const res = await fetch("/api/tugas", {
+        const data = await api("/api/tugas", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -155,24 +205,9 @@ form.addEventListener("submit", async (e) => {
             })
         });
 
-        let data = null;
-
-        try {
-            data = await res.json();
-        } catch {
-            // Respons server mungkin tidak berisi JSON.
-        }
-
-        if (!res.ok) {
-            throw new Error(
-                data?.error ||
-                data?.message ||
-                `Gagal menambahkan tugas (${res.status}).`
-            );
-        }
-
         tugas.push(data);
         form.reset();
+        statusMuat = "success";
         render();
 
         pesanForm.textContent = "Tugas berhasil ditambahkan.";
@@ -210,7 +245,7 @@ daftar.addEventListener("click", async (e) => {
         pesanForm.textContent = "";
 
         try {
-            const res = await fetch(`/api/tugas/${encodeURIComponent(id)}`, {
+            const data = await api(`/api/tugas/${encodeURIComponent(id)}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -220,15 +255,6 @@ daftar.addEventListener("click", async (e) => {
                 })
             });
 
-            const data = await res.json().catch(() => null);
-
-            if (!res.ok) {
-                throw new Error(
-                    data?.error || `Gagal memperbarui tugas (${res.status}).`
-                );
-            }
-
-            // Gunakan data terbaru dari server.
             const index = tugas.findIndex(
                 (item) => String(item.id) === id
             );
@@ -256,19 +282,10 @@ daftar.addEventListener("click", async (e) => {
         pesanForm.textContent = "";
 
         try {
-            const res = await fetch(`/api/tugas/${encodeURIComponent(id)}`, {
+            await api(`/api/tugas/${encodeURIComponent(id)}`, {
                 method: "DELETE"
             });
 
-            if (!res.ok) {
-                const data = await res.json().catch(() => null);
-
-                throw new Error(
-                    data?.error || `Gagal menghapus tugas (${res.status}).`
-                );
-            }
-
-            // DELETE berhasil; respons 204 tidak memiliki body.
             tugas = tugas.filter(
                 (item) => String(item.id) !== id
             );
@@ -303,3 +320,5 @@ filter.addEventListener("click", (e) => {
 
     render();
 });
+
+muatData();
