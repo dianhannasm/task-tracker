@@ -1,14 +1,31 @@
 let tugas = [];
 let filterAktif = "semua";
+let statusMuat = "loading";
+let pesanError = "";
 
 function render() {
     const daftar = document.querySelector("#daftar");
-
-    daftar.innerHTML = "";
-
+    const status = document.querySelector("#status");
+    const ulang = document.querySelector("#ulang");
     const ringkasan = document.querySelector("#ringkasan");
-    const jumlahAktif = tugas.filter((item) => !item.selesai).length;
 
+    daftar.replaceChildren();
+    ulang.hidden = true;
+
+    if (statusMuat === "loading") {
+        status.textContent = "Memuat tugas...";
+        ringkasan.textContent = "Memuat tugas...";
+        return;
+    }
+
+    if (statusMuat === "error") {
+        status.textContent = pesanError;
+        ringkasan.textContent = "Tugas gagal dimuat";
+        ulang.hidden = false;
+        return;
+    }
+
+    const jumlahAktif = tugas.filter((item) => !item.selesai).length;
     ringkasan.textContent = `${jumlahAktif} tugas aktif`;
 
     const tugasTampil = tugas.filter((item) => {
@@ -21,7 +38,16 @@ function render() {
         }
 
         return true;
-    })
+    });
+
+    if (tugasTampil.length === 0) {
+        status.textContent = tugas.length === 0
+            ? "Belum ada tugas. Yuk, tambahkan tugas pertamamu!"
+            : "Tidak ada tugas pada filter ini.";
+        return;
+    }
+
+    status.textContent = "";
 
     tugasTampil.forEach((item) => {
         const li = document.createElement("li");
@@ -59,6 +85,10 @@ function render() {
 }
 
 async function muatTugas() {
+    statusMuat = "loading";
+    pesanError = "";
+    render();
+
     try {
         const res = await fetch("/api/tugas");
 
@@ -67,14 +97,20 @@ async function muatTugas() {
         }
 
         tugas = await res.json();
-
-        console.log("Tugas dari server:", tugas);
-
-        render();
+        statusMuat = "success";
     } catch (error) {
-        console.error("Gagal mengambil tugas:", error.message);
+        statusMuat = "error";
+        pesanError = error.message || "Terjadi kesalahan saat memuat tugas.";
+    } finally {
+        render();
     }
 }
+
+const tombolUlang = document.querySelector("#ulang");
+
+tombolUlang.addEventListener("click", () => {
+    muatTugas();
+});
 
 muatTugas();
 

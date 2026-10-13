@@ -174,6 +174,20 @@ form button:hover {
     color: #999;
 }
 
+#status {
+    margin: 12px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+#ulang {
+    margin-bottom: 12px;
+}
+
+#ulang[hidden] {
+    display: none;
+}
+
 @media (max-width: 750px) {
     form {
         grid-template-columns: 1fr 1fr;
