@@ -119,36 +119,69 @@ const judulInput = document.querySelector("#judul");
 const matkulInput = document.querySelector("#matkul");
 const deadlineInput = document.querySelector("#deadline");
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const judul = judulInput.value.trim();
     const matkul = matkulInput.value;
     const deadline = deadlineInput.value;
+    const tombolTambah = form.querySelector('button[type="submit"]');
+    const pesanForm = document.querySelector("#pesan-form");
+
+    pesanForm.textContent = "";
 
     if (judul.length < 3) {
-        alert("Judul tugas minimal 3 karakter.");
+        pesanForm.textContent = "Judul tugas minimal 3 karakter.";
         return;
     }
 
     if (deadline === "") {
-        alert("Deadline wajib diisi.");
+        pesanForm.textContent = "Deadline wajib diisi.";
         return;
     }
 
-    const tugasBaru = {
-        id: Date.now(),
-        judul: judul,
-        matkul: matkul,
-        deadline: deadline,
-        selesai: false
-    };
+    tombolTambah.disabled = true;
 
-    tugas.push(tugasBaru);
+    try {
+        const res = await fetch("/api/tugas", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                judul: judul,
+                matkul: matkul,
+                deadline: deadline
+            })
+        });
 
-    form.reset();
+        let data = null;
 
-    render();
+        try {
+            data = await res.json();
+        } catch {
+            // Respons server mungkin tidak berisi JSON.
+        }
+
+        if (!res.ok) {
+            throw new Error(
+                data?.error ||
+                data?.message ||
+                `Gagal menambahkan tugas (${res.status}).`
+            );
+        }
+
+        tugas.push(data);
+        form.reset();
+        render();
+
+        pesanForm.textContent = "Tugas berhasil ditambahkan.";
+    } catch (error) {
+        pesanForm.textContent =
+            error.message || "Terjadi kesalahan saat menambahkan tugas.";
+    } finally {
+        tombolTambah.disabled = false;
+    }
 });
 
 const daftar = document.querySelector("#daftar");
