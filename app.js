@@ -1,20 +1,4 @@
-const tugas = [
-    {
-        id: 1,
-        judul: "Lab 10 event delegation",
-        matkul: "Pemrograman Web",
-        deadline: "2026-10-08",
-        selesai: false
-    },
-    {
-        id: 2,
-        judul: "Kuis",
-        matkul: "KJK",
-        deadline: "2026-10-12",
-        selesai: true
-    }
-];
-
+let tugas = [];
 let filterAktif = "semua";
 
 function render() {
@@ -74,7 +58,25 @@ function render() {
     });
 }
 
-render();
+async function muatTugas() {
+    try {
+        const res = await fetch("/api/tugas");
+
+        if (!res.ok) {
+            throw new Error(`Gagal memuat tugas: ${res.status}`);
+        }
+
+        tugas = await res.json();
+
+        console.log("Tugas dari server:", tugas);
+
+        render();
+    } catch (error) {
+        console.error("Gagal mengambil tugas:", error.message);
+    }
+}
+
+muatTugas();
 
 const form = document.querySelector("#form-tugas");
 const judulInput = document.querySelector("#judul");
