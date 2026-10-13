@@ -186,29 +186,103 @@ form.addEventListener("submit", async (e) => {
 
 const daftar = document.querySelector("#daftar");
 
-daftar.addEventListener("click", (e) => {
+
+daftar.addEventListener("click", async (e) => {
     const li = e.target.closest(".task");
 
     if (!li) {
         return;
     }
 
-    const index = tugas.findIndex((item) => item.id === Number(li.dataset.id));
+    const id = li.dataset.id;
+    const item = tugas.find((item) => String(item.id) === id);
 
-    if (index === -1) {
+    if (!item) {
         return;
     }
 
+    const pesanForm = document.querySelector("#pesan-form");
+
+    // PATCH: mengubah status tugas.
     if (e.target.matches('input[type="checkbox"]')) {
-        tugas[index].selesai = e.target.checked;
-        render();
+        const checkbox = e.target;
+        checkbox.disabled = true;
+        pesanForm.textContent = "";
+
+        try {
+            const res = await fetch(`/api/tugas/${encodeURIComponent(id)}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    selesai: checkbox.checked
+                })
+            });
+
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                throw new Error(
+                    data?.error || `Gagal memperbarui tugas (${res.status}).`
+                );
+            }
+
+            // Gunakan data terbaru dari server.
+            const index = tugas.findIndex(
+                (item) => String(item.id) === id
+            );
+
+            if (index !== -1) {
+                tugas[index] = data;
+            }
+
+            render();
+        } catch (error) {
+            pesanForm.textContent =
+                error.message || "Gagal memperbarui tugas.";
+
+            // Kembalikan tampilan checkbox ke state sebelumnya.
+            render();
+        }
+
+        return;
     }
 
+    // DELETE: menghapus tugas.
     if (e.target.closest(".hapus")) {
-        tugas.splice(index, 1);
-        render();
+        const tombolHapus = e.target.closest(".hapus");
+        tombolHapus.disabled = true;
+        pesanForm.textContent = "";
+
+        try {
+            const res = await fetch(`/api/tugas/${encodeURIComponent(id)}`, {
+                method: "DELETE"
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => null);
+
+                throw new Error(
+                    data?.error || `Gagal menghapus tugas (${res.status}).`
+                );
+            }
+
+            // DELETE berhasil; respons 204 tidak memiliki body.
+            tugas = tugas.filter(
+                (item) => String(item.id) !== id
+            );
+
+            render();
+        } catch (error) {
+            pesanForm.textContent =
+                error.message || "Gagal menghapus tugas.";
+
+            render();
+        }
     }
 });
+
 
 const filter = document.querySelector("#filter");
 
